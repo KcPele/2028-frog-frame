@@ -40,7 +40,6 @@ app.frame("/", (c) => {
         key={rowIndex}
         style={{
           width: "440px",
-          backgroundColor: "#57407c",
           display: "flex",
           flexWrap: "wrap",
         }}
@@ -68,7 +67,21 @@ app.frame("/", (c) => {
           width: "100%",
         }}
       >
-        {cells}
+        <div
+          style={{
+            order: 1,
+            width: "440px",
+            height: "440px",
+            display: "flex",
+            flexWrap: "wrap",
+            backgroundColor: "#57407c",
+            borderRadius: "7px",
+
+            position: "relative",
+          }}
+        >
+          {cells}
+        </div>
       </div>
     ),
     intents: [
