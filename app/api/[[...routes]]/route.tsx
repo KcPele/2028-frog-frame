@@ -254,7 +254,7 @@ app.frame("/game", (c) => {
             flexWrap: "wrap",
             backgroundColor: "#57407c",
             borderRadius: "7px",
-            paddingTop: "8px",
+            paddingTop: "6px",
             paddingLeft: "5px",
             position: "relative",
           }}
