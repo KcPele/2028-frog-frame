@@ -70,7 +70,6 @@ const Cell = () => {
 };
 
 const TilesView = ({ tile }: { tile: Tile }) => {
-  console.log(tile.row, tile.column, "-");
   let cssArray: React.CSSProperties[] = [];
   const tileClassName = `tile${tile.value}`;
   const tileStyle = mainStyle[tileClassName] as React.CSSProperties;
@@ -83,19 +82,17 @@ const TilesView = ({ tile }: { tile: Tile }) => {
   if (tile.mergedInto !== null) {
     cssArray.push(mainStyle["tile_merged"]);
   }
-  let isNew = tile.isNew() === true;
+  // let isNew = tile.isNew() === true;
   // if (isNew) {
   //   cssArray.push(mainStyle["tile_new_overlay"]);
   // }
 
-  let hasMoved = tile.hasMoved();
   if (tile.hasMoved()) {
     cssArray.push(subStyle[`row_from_${tile.fromRow()}_to_${tile.toRow()}`]);
     cssArray.push(
       subStyle[`column_from_${tile.fromColumn()}_to_${tile.toColumn()}`]
     );
     cssArray.push(mainStyle["tile_merged_isMoving"]);
-    console.log("hasMoved", tile.fromRow(), tile.toRow(), hasMoved);
   }
 
   let mainTileStyle = cssArray.reduce(
@@ -103,7 +100,6 @@ const TilesView = ({ tile }: { tile: Tile }) => {
     {}
   );
 
-  console.log(cssArray);
   return (
     <span
       style={{
@@ -115,103 +111,101 @@ const TilesView = ({ tile }: { tile: Tile }) => {
   );
 };
 
-const GameOverlay = ({
-  OnRestart,
-  board,
-}: {
-  OnRestart: () => void;
-  board: Board;
-}) => {
-  if (board.hasWon()) {
-    return (
-      <div
-        style={{
-          position: "absolute",
-          backgroundSize: "cover", // Adjust to 'cover', 'contain', or custom size as needed
-          backgroundRepeat: "no-repeat",
-          display: "flex",
-          width: "450px",
-          height: "450px",
-          left: "0",
-          right: "0",
-          top: "0",
-          bottom: "0",
-          backgroundImage:
-            "url('http://res.cloudinary.com/dvx1rye1t/image/upload/c_scale,h_440,q_21/v1711146475/2024-game-assets/2048.gif')",
-        }}
-      ></div>
-    );
-  } else if (board.hasLost()) {
-    return (
-      <div
-        style={{
-          backgroundImage:
-            "url('https://res.cloudinary.com/dvx1rye1t/image/upload/c_scale,h_440,q_39/v1711146470/2024-game-assets/game-over.gif')",
-          position: "absolute",
-          backgroundSize: "cover", // Adjust to 'cover', 'contain', or custom size as needed
-          backgroundRepeat: "no-repeat",
-          display: "flex",
+// const GameOverlay = ({
+//   OnRestart,
+//   board,
+// }: {
+//   OnRestart: () => void;
+//   board: Board;
+// }) => {
+//   if (board.hasWon()) {
+//     return (
+//       <div
+//         style={{
+//           position: "absolute",
+//           backgroundSize: "cover", // Adjust to 'cover', 'contain', or custom size as needed
+//           backgroundRepeat: "no-repeat",
+//           display: "flex",
+//           width: "450px",
+//           height: "450px",
+//           left: "0",
+//           right: "0",
+//           top: "0",
+//           bottom: "0",
+//           backgroundImage:
+//             "url('http://res.cloudinary.com/dvx1rye1t/image/upload/c_scale,h_440,q_21/v1711146475/2024-game-assets/2048.gif')",
+//         }}
+//       ></div>
+//     );
+//   } else if (board.hasLost()) {
+//     return (
+//       <div
+//         style={{
+//           backgroundImage:
+//             "url('https://res.cloudinary.com/dvx1rye1t/image/upload/c_scale,h_440,q_39/v1711146470/2024-game-assets/game-over.gif')",
+//           position: "absolute",
+//           backgroundSize: "cover", // Adjust to 'cover', 'contain', or custom size as needed
+//           backgroundRepeat: "no-repeat",
+//           display: "flex",
 
-          left: "0",
-          right: "0",
-          top: "0",
-          bottom: "0",
-        }}
-        onClick={OnRestart}
-      >
-        {/* <ima
-          src="https://res.cloudinary.com/dvx1rye1t/image/upload/v1711146468/2024-game-assets/try-again.gif"
-          alt="tryagainlogo"
-        /> */}
-      </div>
-    );
-  }
-  return null;
-};
+//           left: "0",
+//           right: "0",
+//           top: "0",
+//           bottom: "0",
+//         }}
+//         onClick={OnRestart}
+//       >
+//         {/* <ima
+//           src="https://res.cloudinary.com/dvx1rye1t/image/upload/v1711146468/2024-game-assets/try-again.gif"
+//           alt="tryagainlogo"
+//         /> */}
+//       </div>
+//     );
+//   }
+//   return null;
+// };
 
 app.frame("/game", (c) => {
   const { buttonValue, deriveState } = c;
-  const state = deriveState((prevState) => {
-    if (!prevState.newGame) {
-      console.log("new game");
-      prevState.board = new Board();
-    }
+  let board = new Board();
+  // const state = deriveState((prevState) => {
+  //   if (!prevState.newGame) {
+  //     prevState.board = new Board();
+  //   }
 
-    if (buttonValue) {
-      prevState.newGame = true;
-      // if (prevState.board.hasWon()) {
-      //   return;
-      // }
-      let direction: number | null = null;
+  //   if (buttonValue) {
+  //     prevState.newGame = true;
+  //     // if (prevState.board.hasWon()) {
+  //     //   return;
+  //     // }
+  //     let direction: number | null = null;
 
-      switch (buttonValue) {
-        case "left":
-          direction = 0;
-          break;
-        case "up":
-          direction = 1;
-          break;
-        case "right":
-          direction = 2;
-          break;
-        case "down":
-          direction = 3;
-          break;
-      }
-      if (direction !== null) {
-        console.log(direction, buttonValue);
-        let boardClone: Board = Object.assign(
-          Object.create(Object.getPrototypeOf(prevState.board)),
-          prevState.board
-        );
-        let newBoard = boardClone.move(direction);
-        prevState.board = newBoard;
-      }
-    }
-    console.log(prevState.board.score);
-  });
+  //     switch (buttonValue) {
+  //       case "left":
+  //         direction = 0;
+  //         break;
+  //       case "up":
+  //         direction = 1;
+  //         break;
+  //       case "right":
+  //         direction = 2;
+  //         break;
+  //       case "down":
+  //         direction = 3;
+  //         break;
+  //     }
+  //     if (direction !== null) {
+  //       let boardClone: Board = Object.assign(
+  //         Object.create(Object.getPrototypeOf(prevState.board)),
+  //         prevState.board
+  //       );
+  //       let newBoard = boardClone.move(direction);
+  //       prevState.board = newBoard;
+  //     }
+  //   }
+  // });
 
-  const cells = state.board.cells.map((row, rowIndex) => {
+  const cells = board.cells.map((row, rowIndex) => {
     return (
       <div
         key={rowIndex}
@@ -222,12 +216,12 @@ app.frame("/game", (c) => {
         }}
       >
         {row.map((cell, columnIndex) => {
-          return <Cell key={rowIndex * state.board.size + columnIndex} />;
+          return <Cell key={rowIndex * board.size + columnIndex} />;
         })}
       </div>
     );
   });
-  const tiles = state.board.tiles
+  const tiles = board.tiles
     .filter((tile) => tile.value !== 0)
     .map((tile, index) => {
       return <TilesView key={index} tile={tile} />;
@@ -255,7 +249,7 @@ app.frame("/game", (c) => {
             color: "white",
           }}
         >
-          Score: {state.board.score}
+          Score: {board.score}
         </p>
         <div
           style={{
