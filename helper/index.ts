@@ -89,7 +89,7 @@ class Board {
     this.cells = [];
     this.score = 0;
     this.size = 4;
-    this.fourProbability = 0.1;
+    this.fourProbability = 0.5;
     this.deltaX = [-1, 0, 1, 0];
     this.deltaY = [0, -1, 0, 1];
     this.won = false;
