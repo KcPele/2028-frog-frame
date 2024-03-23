@@ -146,13 +146,13 @@ const mainStyle: MainStyles = {
   tile: {
     position: "absolute",
   },
-  "tile.merged": {
+  tile_merged: {
     display: "none",
   },
-  "tile.merged.isMoving": {
-    display: "inline",
+  tile_merged_isMoving: {
+    display: "flex",
   },
-  "tile.new, .overlay": {
+  tile_new_overlay: {
     animationDuration: "0.2s",
     animationName: "newTile",
     animationFillMode: "forwards",

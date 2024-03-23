@@ -7,20 +7,20 @@ import { devtools } from "frog/dev";
 import { handle } from "frog/next";
 import { serveStatic } from "frog/serve-static";
 import mainStyle from "@/app/mainStyle";
-export type AppState = {
+import { subStyle } from "@/app/style";
+export type State = {
   board: Board;
   newGame: boolean;
 };
 
-const app = new Frog<{ State: AppState }>({
+const app = new Frog<{ State: State }>({
   assetsPath: "/",
   basePath: "/api",
-  initialState: {
-    board: new Board(),
-    newGame: false,
-  },
   // Supply a Hub to enable frame verification.
   // hub: neynar({ apiKey: 'NEYNAR_FROG_FM' })
+  initialState: {
+    newGame: false,
+  },
 });
 
 // Uncomment to use Edge Runtime
@@ -70,15 +70,43 @@ const Cell = () => {
 };
 
 const TilesView = ({ tile }: { tile: Tile }) => {
-  console.log(tile);
+  console.log(tile.row, tile.column, "-");
+  let cssArray: React.CSSProperties[] = [];
   const tileClassName = `tile${tile.value}`;
   const tileStyle = mainStyle[tileClassName] as React.CSSProperties;
-  console.log(tileStyle);
+  cssArray.push(tileStyle);
+  cssArray.push(mainStyle.cell_tile);
+
+  if (tile.mergedInto === null) {
+    cssArray.push(subStyle[`position_${tile.row}_${tile.column}_not_isMoving`]);
+  }
+  // if (tile.mergedInto !== null) {
+  //   cssArray.push(mainStyle["tile_merged"]);
+  // }
+  // let isNew = tile.isNew() === true;
+  // if (isNew) {
+  //   cssArray.push(mainStyle["tile_new_overlay"]);
+  // }
+
+  // if (tile.hasMoved()) {
+  //   cssArray.push(subStyle[`row_from_${tile.fromRow()}_to_${tile.toRow()}`]);
+  //   cssArray.push(
+  //     subStyle[`column_from_${tile.fromColumn()}_to_${tile.toColumn()}`]
+  //   );
+  //   cssArray.push(mainStyle["tile_merged_isMoving"]);
+  // }
+
+  let mainTileStyle = cssArray.reduce(
+    (acc, style) => ({ ...acc, ...style }),
+    {}
+  );
+
+  console.log(cssArray);
   return (
     <span
       style={{
-        ...mainStyle.cell_tile,
-        ...tileStyle,
+        ...mainTileStyle,
+        position: "absolute",
         backgroundColor: "green",
       }}
     ></span>
@@ -245,6 +273,10 @@ app.frame("/game", (c) => {
             style={{
               width: "440px",
               display: "flex",
+              left: "0",
+              right: "0",
+              top: "0",
+              bottom: "0",
               position: "absolute",
               flexWrap: "wrap",
             }}
