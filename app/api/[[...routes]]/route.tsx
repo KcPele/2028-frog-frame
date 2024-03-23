@@ -80,21 +80,23 @@ const TilesView = ({ tile }: { tile: Tile }) => {
   if (tile.mergedInto === null) {
     cssArray.push(subStyle[`position_${tile.row}_${tile.column}_not_isMoving`]);
   }
-  // if (tile.mergedInto !== null) {
-  //   cssArray.push(mainStyle["tile_merged"]);
-  // }
-  // let isNew = tile.isNew() === true;
+  if (tile.mergedInto !== null) {
+    cssArray.push(mainStyle["tile_merged"]);
+  }
+  let isNew = tile.isNew() === true;
   // if (isNew) {
   //   cssArray.push(mainStyle["tile_new_overlay"]);
   // }
 
-  // if (tile.hasMoved()) {
-  //   cssArray.push(subStyle[`row_from_${tile.fromRow()}_to_${tile.toRow()}`]);
-  //   cssArray.push(
-  //     subStyle[`column_from_${tile.fromColumn()}_to_${tile.toColumn()}`]
-  //   );
-  //   cssArray.push(mainStyle["tile_merged_isMoving"]);
-  // }
+  let hasMoved = tile.hasMoved();
+  if (tile.hasMoved()) {
+    cssArray.push(subStyle[`row_from_${tile.fromRow()}_to_${tile.toRow()}`]);
+    cssArray.push(
+      subStyle[`column_from_${tile.fromColumn()}_to_${tile.toColumn()}`]
+    );
+    cssArray.push(mainStyle["tile_merged_isMoving"]);
+    console.log("hasMoved", tile.fromRow(), tile.toRow(), hasMoved);
+  }
 
   let mainTileStyle = cssArray.reduce(
     (acc, style) => ({ ...acc, ...style }),
