@@ -11,6 +11,7 @@ import { subStyle } from "@/app/style";
 export type State = {
   board: Board;
   newGame: boolean;
+  score: number;
 };
 
 const app = new Frog<{ State: State }>({
@@ -20,6 +21,7 @@ const app = new Frog<{ State: State }>({
   // hub: neynar({ apiKey: 'NEYNAR_FROG_FM' })
   initialState: {
     newGame: false,
+    score: 0,
   },
 });
 
@@ -168,42 +170,34 @@ const TilesView = ({ tile }: { tile: Tile }) => {
 app.frame("/game", (c) => {
   const { buttonValue, deriveState } = c;
   let board = new Board();
-  // const state = deriveState((prevState) => {
-  //   if (!prevState.newGame) {
-  //     prevState.board = new Board();
-  //   }
-
-  //   if (buttonValue) {
-  //     prevState.newGame = true;
-  //     // if (prevState.board.hasWon()) {
-  //     //   return;
-  //     // }
-  //     let direction: number | null = null;
-
-  //     switch (buttonValue) {
-  //       case "left":
-  //         direction = 0;
-  //         break;
-  //       case "up":
-  //         direction = 1;
-  //         break;
-  //       case "right":
-  //         direction = 2;
-  //         break;
-  //       case "down":
-  //         direction = 3;
-  //         break;
-  //     }
-  //     if (direction !== null) {
-  //       let boardClone: Board = Object.assign(
-  //         Object.create(Object.getPrototypeOf(prevState.board)),
-  //         prevState.board
-  //       );
-  //       let newBoard = boardClone.move(direction);
-  //       prevState.board = newBoard;
-  //     }
-  //   }
-  // });
+  const state = deriveState((prevState) => {
+    if (buttonValue) {
+      prevState.score += 1;
+      let direction: number | null = null;
+      switch (buttonValue) {
+        case "left":
+          direction = 0;
+          break;
+        case "up":
+          direction = 1;
+          break;
+        case "right":
+          direction = 2;
+          break;
+        case "down":
+          direction = 3;
+          break;
+      }
+      if (direction !== null) {
+        let boardClone: Board = Object.assign(
+          Object.create(Object.getPrototypeOf(board)),
+          board
+        );
+        let newBoard = boardClone.move(direction);
+        board = newBoard;
+      }
+    }
+  });
 
   const cells = board.cells.map((row, rowIndex) => {
     return (
@@ -249,7 +243,7 @@ app.frame("/game", (c) => {
             color: "white",
           }}
         >
-          Score: {board.score}
+          Score: {state.score}
         </p>
         <div
           style={{
