@@ -128,8 +128,8 @@ const GameOverlay = ({
           backgroundSize: "cover", // Adjust to 'cover', 'contain', or custom size as needed
           backgroundRepeat: "no-repeat",
           display: "flex",
-          width: "440px",
-          height: "440px",
+          width: "450px",
+          height: "450px",
           left: "0",
           right: "0",
           top: "0",
@@ -214,7 +214,7 @@ app.frame("/game", (c) => {
       <div
         key={rowIndex}
         style={{
-          width: "440px",
+          width: "450px",
           display: "flex",
           flexWrap: "wrap",
         }}
@@ -258,20 +258,21 @@ app.frame("/game", (c) => {
         <div
           style={{
             order: 1,
-            width: "440px",
-            height: "440px",
+            width: "450px",
+            height: "450px",
             display: "flex",
             flexWrap: "wrap",
             backgroundColor: "#57407c",
             borderRadius: "7px",
-
+            paddingTop: "8px",
+            paddingLeft: "5px",
             position: "relative",
           }}
         >
           {cells}
           <div
             style={{
-              width: "440px",
+              width: "450px",
               display: "flex",
               left: "0",
               right: "0",
@@ -285,8 +286,8 @@ app.frame("/game", (c) => {
           </div>
           {/* <div
             style={{
-              width: "440px",
-              height: "440px",
+              width: "450px",
+              height: "450px",
               display: "flex",
               position: "absolute",
               flexWrap: "wrap",
