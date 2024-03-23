@@ -1,9 +1,9 @@
 {
-  "name": ".",
+  "name": "frog-frame",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "frog dev",
+    "dev": "next dev",
     "deploy": "vercel",
     "build": "next build",
     "start": "next start",

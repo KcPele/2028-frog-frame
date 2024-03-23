@@ -1,4 +1,8 @@
-const mainStyle = {
+interface MainStyles {
+  [className: string]: React.CSSProperties;
+}
+
+const mainStyle: MainStyles = {
   body: {
     alignItems: "center",
     background: "linear-gradient(to right, #432889, #17101F)",
@@ -45,10 +49,10 @@ const mainStyle = {
     padding: "10px 20px",
     borderRadius: "7px",
     transition: "color 0.3s ease, background-color 0.3s ease",
-    hover: {
-      backgroundColor: "#d3386a",
-      color: "rgba(255, 255, 255, 1)",
-    },
+    // hover: {
+    //   backgroundColor: "#d3386a",
+    //   color: "rgba(255, 255, 255, 1)",
+    // },
   },
   score_header: {
     fontSize: "50%",
@@ -65,15 +69,8 @@ const mainStyle = {
     width: "100px",
     height: "100px",
     margin: "5px",
-    lineHeight: "90px",
-    display: "inline-block",
-    fontSize: "55px",
-    fontWeight: "bold",
-    textAlign: "center",
-    verticalAlign: "middle",
+    display: "flex",
     borderRadius: "7px",
-    fontFamily: "Clear Sans",
-    color: "#766",
     backgroundColor: "#3d2963",
   },
   tile0: {
@@ -81,46 +78,53 @@ const mainStyle = {
   },
   tile2: {
     backgroundColor: "#eee",
-    backgroundImage: "url(./assets/img/2.gif)",
+    backgroundImage:
+      "url('http://res.cloudinary.com/dvx1rye1t/image/upload/v1711146470/2024-game-assets/2.gif')",
   },
   tile4: {
     backgroundColor: "#eec",
-    backgroundImage: "url(./assets/img/4.gif)",
+    backgroundImage:
+      "url('https://res.cloudinary.com/dvx1rye1t/image/upload/v1711146470/2024-game-assets/4.gif')",
   },
   tile8: {
     color: "#ffe",
-    backgroundImage: "url(./assets/img/8.gif)",
+    backgroundImage:
+      "url('https://res.cloudinary.com/dvx1rye1t/image/upload/v1711146468/2024-game-assets/8.gif')",
   },
   tile16: {
     color: "#ffe",
-    backgroundImage: "url(./assets/img/16.gif)",
+    backgroundImage:
+      "url('https://res.cloudinary.com/dvx1rye1t/image/upload/v1711146472/2024-game-assets/16.gif')",
   },
   tile32: {
     color: "#ffe",
-    backgroundImage: "url(./assets/img/32.gif)",
+    backgroundImage:
+      "url('https://res.cloudinary.com/dvx1rye1t/image/upload/v1711146471/2024-game-assets/32.gif')",
   },
   tile64: {
     color: "#ffe",
-    backgroundImage: "url(./assets/img/64.gif)",
+    backgroundImage:
+      "url('https://res.cloudinary.com/dvx1rye1t/image/upload/v1711146470/2024-game-assets/64.gif')",
   },
   tile128: {
     color: "#ffe",
-    backgroundImage: "url(./assets/img/128.gif)",
+    backgroundImage:
+      "url('https://res.cloudinary.com/dvx1rye1t/image/upload/v1711146472/2024-game-assets/128.gif')",
   },
   tile256: {
     color: "#ffe",
-    backgroundImage: "url(./assets/img/256.gif)",
-    fontSize: "45px",
+    backgroundImage:
+      "url('https://res.cloudinary.com/dvx1rye1t/image/upload/v1711146469/2024-game-assets/256.gif')",
   },
   tile512: {
     color: "#ffe",
-    backgroundImage: "url(./assets/img/512.gif)",
-    fontSize: "45px",
+    backgroundImage:
+      "url('https://res.cloudinary.com/dvx1rye1t/image/upload/v1711146469/2024-game-assets/512.gif')",
   },
   tile1024: {
     color: "#fff",
-    backgroundImage: "url(./assets/img/1024.gif)",
-    fontSize: "35px",
+    backgroundImage:
+      "url('https://res.cloudinary.com/dvx1rye1t/image/upload/v1711146472/2024-game-assets/1024.gif')",
   },
   tile2048: {
     position: "absolute",
@@ -132,7 +136,6 @@ const mainStyle = {
     padding: "0px",
     color: "#fff",
     backgroundImage: "url(./assets/img/2048.gif)",
-    fontSize: "35px",
   },
   "try-again": {
     zIndex: "10",
@@ -156,14 +159,14 @@ const mainStyle = {
     animationDelay: "0.15s",
     transform: "scale(0)",
   },
-  "@keyframes newTile": {
-    from: {
-      transform: "scale(0)",
-    },
-    to: {
-      transform: "scale(1)",
-    },
-  },
+  // "@keyframes newTile": {
+  //   from: {
+  //     transform: "scale(0)",
+  //   },
+  //   to: {
+  //     transform: "scale(1)",
+  //   },
+  // },
   overlay: {
     position: "absolute",
     top: "0px",

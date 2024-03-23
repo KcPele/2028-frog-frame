@@ -1,40 +1,187 @@
 /** @jsxImportSource frog/jsx */
 
-import { Board } from "@/helper";
+import { Board, Tile } from "@/helper";
 import { Button, Frog, TextInput } from "frog";
 import { devtools } from "frog/dev";
 // import { neynar } from 'frog/hubs'
 import { handle } from "frog/next";
 import { serveStatic } from "frog/serve-static";
-const app = new Frog({
+import mainStyle from "@/app/mainStyle";
+export type AppState = {
+  board: Board;
+  newGame: boolean;
+};
+
+const app = new Frog<{ State: AppState }>({
   assetsPath: "/",
   basePath: "/api",
+  initialState: {
+    board: new Board(),
+    newGame: false,
+  },
   // Supply a Hub to enable frame verification.
   // hub: neynar({ apiKey: 'NEYNAR_FROG_FM' })
 });
 
 // Uncomment to use Edge Runtime
 // export const runtime = "edge";
+
+app.frame("/", (c) => {
+  return c.res({
+    image: (
+      <div
+        style={{
+          alignItems: "center",
+          background: "linear-gradient(to right, #432889, #17101F)",
+          backgroundSize: "100% 100%",
+          display: "flex",
+          flexDirection: "column",
+          flexWrap: "nowrap",
+          height: "100%",
+          justifyContent: "center",
+          textAlign: "center",
+          width: "100%",
+        }}
+      >
+        <h2
+          style={{
+            fontSize: "40px",
+            color: "white",
+          }}
+        >
+          Welcome
+        </h2>
+        <p
+          style={{
+            fontSize: "30px",
+            color: "white",
+          }}
+        >
+          Start a new game
+        </p>
+      </div>
+    ),
+    intents: [<Button action="/game">Play</Button>],
+  });
+});
+
 const Cell = () => {
+  return <span style={mainStyle.cell_tile}></span>;
+};
+
+const TilesView = ({ tile }: { tile: Tile }) => {
+  console.log(tile);
+  const tileClassName = `tile${tile.value}`;
+  const tileStyle = mainStyle[tileClassName] as React.CSSProperties;
+  console.log(tileStyle);
   return (
     <span
       style={{
-        width: "100px",
-        height: "100px",
-        margin: "5px",
-
-        fontWeight: "bold",
-
-        borderRadius: "7px",
-        backgroundColor: "#3d2963",
+        ...mainStyle.cell_tile,
+        ...tileStyle,
+        backgroundColor: "green",
       }}
     ></span>
   );
 };
 
-app.frame("/", (c) => {
-  const board = new Board();
-  const cells = board.cells.map((row, rowIndex) => {
+const GameOverlay = ({
+  OnRestart,
+  board,
+}: {
+  OnRestart: () => void;
+  board: Board;
+}) => {
+  if (board.hasWon()) {
+    return (
+      <div
+        style={{
+          position: "absolute",
+          backgroundSize: "cover", // Adjust to 'cover', 'contain', or custom size as needed
+          backgroundRepeat: "no-repeat",
+          display: "flex",
+          width: "440px",
+          height: "440px",
+          left: "0",
+          right: "0",
+          top: "0",
+          bottom: "0",
+          backgroundImage:
+            "url('http://res.cloudinary.com/dvx1rye1t/image/upload/c_scale,h_440,q_21/v1711146475/2024-game-assets/2048.gif')",
+        }}
+      ></div>
+    );
+  } else if (board.hasLost()) {
+    return (
+      <div
+        style={{
+          backgroundImage:
+            "url('https://res.cloudinary.com/dvx1rye1t/image/upload/c_scale,h_440,q_39/v1711146470/2024-game-assets/game-over.gif')",
+          position: "absolute",
+          backgroundSize: "cover", // Adjust to 'cover', 'contain', or custom size as needed
+          backgroundRepeat: "no-repeat",
+          display: "flex",
+
+          left: "0",
+          right: "0",
+          top: "0",
+          bottom: "0",
+        }}
+        onClick={OnRestart}
+      >
+        {/* <ima
+          src="https://res.cloudinary.com/dvx1rye1t/image/upload/v1711146468/2024-game-assets/try-again.gif"
+          alt="tryagainlogo"
+        /> */}
+      </div>
+    );
+  }
+  return null;
+};
+
+app.frame("/game", (c) => {
+  const { buttonValue, deriveState } = c;
+  const state = deriveState((prevState) => {
+    if (!prevState.newGame) {
+      console.log("new game");
+      prevState.board = new Board();
+    }
+
+    if (buttonValue) {
+      prevState.newGame = true;
+      // if (prevState.board.hasWon()) {
+      //   return;
+      // }
+      let direction: number | null = null;
+
+      switch (buttonValue) {
+        case "left":
+          direction = 0;
+          break;
+        case "up":
+          direction = 1;
+          break;
+        case "right":
+          direction = 2;
+          break;
+        case "down":
+          direction = 3;
+          break;
+      }
+      if (direction !== null) {
+        console.log(direction, buttonValue);
+        let boardClone: Board = Object.assign(
+          Object.create(Object.getPrototypeOf(prevState.board)),
+          prevState.board
+        );
+        let newBoard = boardClone.move(direction);
+        prevState.board = newBoard;
+      }
+    }
+    console.log(prevState.board.score);
+  });
+
+  const cells = state.board.cells.map((row, rowIndex) => {
     return (
       <div
         key={rowIndex}
@@ -45,11 +192,16 @@ app.frame("/", (c) => {
         }}
       >
         {row.map((cell, columnIndex) => {
-          return <Cell key={rowIndex * board.size + columnIndex} />;
+          return <Cell key={rowIndex * state.board.size + columnIndex} />;
         })}
       </div>
     );
   });
+  const tiles = state.board.tiles
+    .filter((tile) => tile.value !== 0)
+    .map((tile, index) => {
+      return <TilesView key={index} tile={tile} />;
+    });
 
   return c.res({
     image: (
@@ -67,6 +219,14 @@ app.frame("/", (c) => {
           width: "100%",
         }}
       >
+        <p
+          style={{
+            fontSize: "40px",
+            color: "white",
+          }}
+        >
+          Score: {state.board.score}
+        </p>
         <div
           style={{
             order: 1,
@@ -81,23 +241,32 @@ app.frame("/", (c) => {
           }}
         >
           {cells}
+          <div
+            style={{
+              width: "440px",
+              display: "flex",
+              position: "absolute",
+              flexWrap: "wrap",
+            }}
+          >
+            {tiles}
+          </div>
+          {/* <div
+            style={{
+              width: "440px",
+              height: "440px",
+              display: "flex",
+              position: "absolute",
+              flexWrap: "wrap",
+              left: "0",
+              right: "0",
+              top: "0",
+              bottom: "0",
+            }}
+          >
+            <GameOverlay OnRestart={resetGame} board={board} />
+          </div> */}
         </div>
-      </div>
-    ),
-    intents: [
-      <Button value="up">Up</Button>,
-      <Button value="left">Left</Button>,
-      <Button value="right">Right</Button>,
-      <Button value="down">down</Button>,
-    ],
-  });
-});
-
-app.frame("/game", (c) => {
-  return c.res({
-    image: (
-      <div>
-        <h2>Start came</h2>
       </div>
     ),
     intents: [
