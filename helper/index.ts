@@ -74,6 +74,12 @@ class Tile {
   }
 }
 
+function getRandomNumber(): number {
+  const possibleValues: number[] = [4, 8, 16, 32, 64, 128, 256, 512];
+  const randomIndex: number = Math.floor(Math.random() * possibleValues.length);
+  return possibleValues[randomIndex];
+}
+
 class Board {
   tiles: Tile[];
   cells: Tile[][];
@@ -164,7 +170,7 @@ class Board {
     }
     var index = ~~(Math.random() * emptyCells.length);
     var cell = emptyCells[index];
-    var newValue = Math.random() < this.fourProbability ? 4 : 2;
+    var newValue = getRandomNumber();
     this.cells[cell.r][cell.c] = this.addTile(newValue);
   }
   move(direction: number) {
