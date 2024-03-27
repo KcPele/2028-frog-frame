@@ -8,18 +8,19 @@ import { handle } from "frog/next";
 import { serveStatic } from "frog/serve-static";
 import mainStyle from "@/app/mainStyle";
 import { subStyle } from "@/app/style";
+import { neynar } from "frog/hubs";
 export type State = {
   board: Board;
   newGame: boolean;
   score: number;
   attempts: number;
 };
-
+const NEYNAR_API_KEY = process.env.NEXT_PUBLIC_NEYNAR_API_KEY || "";
 const app = new Frog<{ State: State }>({
   assetsPath: "/",
   basePath: "/api",
   // Supply a Hub to enable frame verification.
-  // hub: neynar({ apiKey: 'NEYNAR_FROG_FM' })
+  hub: neynar({ apiKey: NEYNAR_API_KEY }),
   initialState: {
     newGame: false,
     score: 0,
@@ -53,16 +54,26 @@ app.frame("/", (c) => {
             color: "white",
           }}
         >
-          Welcome
+          Welcome and Guess a Number
         </h2>
-        <p
+        <div
           style={{
-            fontSize: "30px",
-            color: "white",
+            maxWidth: "500px",
+            display: "flex",
           }}
         >
-          Start a new game
-        </p>
+          <p
+            style={{
+              fontSize: "30px",
+              color: "white",
+            }}
+          >
+            How to play, click on the number you think is on the board or type
+            the number in the input field and click enter. if the number you
+            guess is what is to be shwon on the board, you get a point(score
+            increase).
+          </p>
+        </div>
       </div>
     ),
     intents: [<Button action="/game">Play</Button>],
@@ -185,7 +196,7 @@ app.frame("/game", (c) => {
               color: "white",
             }}
           >
-            Guesses: {state.attempts}
+            Guess: {state.attempts}
           </p>
           <p
             style={{
